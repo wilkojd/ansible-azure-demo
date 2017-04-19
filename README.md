@@ -17,8 +17,8 @@ host_key_checking = False
 6. Confirm ansible is available `ansible --version` returns `ansible 2.3.0.0`
 
 ### Azure
-1. Create a *service principal* application with an existing Azure account and assign it as an owner of the azure account, in order to authenticate Ansible with azure account. The steps to do this are detailed at https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal . **N.B. The URL for the application does not have to be a working URL, see http://blog.davidebbo.com/2014/12/azure-service-principal.html.**
-2. Get the required values of client_id (the app id), secret (the key secret), tenant (as per instructions in official azure article from step 1), and subscription_id (found in billing/subscriptions). Save them into ~/.azure/credentials like this:
+1. Create a *service principal* application with an existing Azure account and assign it as an owner of the Azure account, in order to authenticate Ansible with Azure account. The steps to do this are detailed at https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal . **N.B. The URL for the application does not have to be a working URL, see http://blog.davidebbo.com/2014/12/azure-service-principal.html.**
+2. From the Azure portal, get the required values of client_id (the app id), secret, and tenant, as per instructions in official Azure article from step 1), and the subscription_id (found in billing/subscriptions). Save them into ~/.azure/credentials like this:
 
 ```
 [default]
