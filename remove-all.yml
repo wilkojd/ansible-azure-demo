@@ -1,7 +1,9 @@
+# This playbook requires resources in the resource_group Testing to already exist. Warning: it will delete everything (eventually).
 - hosts: localhost
   tasks:
     - name: Delete a resource group
       azure_rm_resourcegroup:
         name: Testing
         state: absent
+        # Make the task delete, rather than error because of resources in the group still existing.
         force: true

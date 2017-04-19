@@ -1,3 +1,4 @@
+# This playbook requires public ip address and VM resources in the resource_group Testing to already exist
 - hosts: localhost
   tasks:
     - name: Retrieve public ips of VMs in resource group
@@ -19,6 +20,5 @@
         user: azure_user
         key: "{{ lookup('file', './newuserkey.pub') }}"
         #state: absent
-      register: shell_out
 
-#Assertion to check can/can't login using ssh -i newuserkey?
+# Add a test to check can/can't login using ssh -i newuserkey?

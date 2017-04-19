@@ -76,6 +76,8 @@
       add_host:
         name: "{{ item.state.ip_address }}"
         group: azure_vms
+      # Use the return value from the ip address creation to create ansible host/group records.
+      # These records are in-memory, and for this playbook only.
       with_items: "{{ ip_addresses.results }}"
 
     - name: Print hosts in azure_vms groups
