@@ -1,0 +1,43 @@
+  # One IP per NIC, one NIC per VM.
+- name: "Create public ip {{ vm_number }}"
+  azure_rm_publicipaddress:
+    resource_group: "{{ resource_group }}"
+    allocation_method: Static
+    name: "publicip00{{ vm_number }}"
+  # Store the return value from the module for use later
+  register: ip_address
+
+- name: "Create NIC {{ vm_number }}"
+  azure_rm_networkinterface:
+    resource_group: "{{ resource_group }}"
+    name: "testnic00{{ vm_number }}"
+    virtual_network: testvn001
+    subnet: subnet001
+    public_ip_name: "publicip00{{ vm_number }}"
+    security_group: secgroup001
+  
+
+- name: "Create virtual machine {{ vm_number }}"
+  azure_rm_virtualmachine:
+    resource_group: "{{ resource_group }}"
+    name: "testvm00{{ vm_number }}"
+    vm_size: Standard_D1
+    ssh_password_enabled: false
+    ssh_public_keys: 
+      - path: /home/azure_user/.ssh/authorized_keys
+        key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    admin_username: azure_user
+    network_interfaces: "testnic00{{ vm_number }}"
+    image:
+      offer: UbuntuServer
+      sku: 16.04-LTS
+      version: latest
+      publisher: Canonical
+
+# Use the return value from the ip address creation to create ansible host/group records.
+# These records are in-memory, and for this playbook only.
+# This isn't strictly necessary unless we want to test VM existence ourselves
+- name: Add new host to playbook hosts record
+  add_host:
+    name: "{{ ip_address.state.ip_address }}"
+    group: azure_vms
