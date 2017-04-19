@@ -20,16 +20,6 @@
         address_prefix: "10.10.0.0/24"
         virtual_network: testvn001
 
-    # One IP per NIC, one NIC per VM.
-    - name: Create public ips
-      azure_rm_publicipaddress:
-        resource_group: Testing
-        allocation_method: Static
-        name: "publicip00{{ item }}"
-      # Store the return value from the module for use later
-      register: ip_addresses
-      with_sequence: count=2
-
     - name: Create security group that allows SSH
       azure_rm_securitygroup:
         resource_group: Testing
@@ -41,44 +31,13 @@
             access: Allow
             priority: 101
             direction: Inbound
-
-    - name: Create NICs
-      azure_rm_networkinterface:
-        resource_group: Testing
-        name: "testnic00{{ item }}"
-        virtual_network: testvn001
-        subnet: subnet001
-        public_ip_name: "publicip00{{ item }}"
-        security_group: secgroup001
-      with_sequence: count=2
-
-    - name: Create virtual machines
-      azure_rm_virtualmachine:
-        resource_group: Testing
-        name: "testvm00{{ item }}"
-        vm_size: Standard_D1
-        ssh_password_enabled: false
-        ssh_public_keys: 
-          - path: /home/azure_user/.ssh/authorized_keys
-            key_data: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-        admin_username: azure_user
-        network_interfaces: "testnic00{{ item }}"
-        image:
-          offer: UbuntuServer
-          sku: 16.04-LTS
-          version: latest
-          publisher: Canonical
+    
+    - name: Run tasks needed for each VM
+      include: "create-per-vm-resources.yml vm_number={{item}}"
       with_sequence: count=2
 
 # If Ansible hasn't failed this playbook, VMs probably exist.
 # Steps below are proving the VMs exist for ourselves
-    - name: Add hosts to playbook hosts record
-      add_host:
-        name: "{{ item.state.ip_address }}"
-        group: azure_vms
-      # Use the return value from the ip address creation to create ansible host/group records.
-      # These records are in-memory, and for this playbook only.
-      with_items: "{{ ip_addresses.results }}"
 
     - name: Print hosts in azure_vms groups
       debug:
