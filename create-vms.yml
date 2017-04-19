@@ -2,38 +2,14 @@
 # Commands run against Azure are run from localhost
 - hosts: localhost
   tasks:
-    - name: Create a resource group
-      azure_rm_resourcegroup:
-        name: Testing
-        location: westeurope
+    - name: Run tasks needed for each resource group
+      include: create-per-resource-group-resources.yml resource_group=Testing
 
-    - name: Create virtual network
-      azure_rm_virtualnetwork:
-        resource_group: Testing
-        name: testvn001
-        address_prefixes: "10.10.0.0/16"
-
-    - name: Add subnet
-      azure_rm_subnet:
-        resource_group: Testing
-        name: subnet001
-        address_prefix: "10.10.0.0/24"
-        virtual_network: testvn001
-
-    - name: Create security group that allows SSH
-      azure_rm_securitygroup:
-        resource_group: Testing
-        name: secgroup001
-        rules:
-          - name: SSH
-            protocol: Tcp
-            destination_port_range: 22
-            access: Allow
-            priority: 101
-            direction: Inbound
-    
     - name: Run tasks needed for each VM
-      include: "create-per-vm-resources.yml vm_number={{item}}"
+      include: create-per-vm-resources.yml
+      vars: 
+        vm_number: "{{item}}"
+        resource_group: Testing
       with_sequence: count=2
 
 # If Ansible hasn't failed this playbook, VMs probably exist.
