@@ -1,3 +1,5 @@
+# Initial version of this script came from the Ansible Azure documentation. https://docs.ansible.com/ansible/guide_azure.html
+# Commands run against Azure are run from localhost
 - hosts: localhost
   tasks:
     - name: Create a resource group
@@ -18,11 +20,13 @@
         address_prefix: "10.10.0.0/24"
         virtual_network: testvn001
 
+    # One IP per NIC, one NIC per VM.
     - name: Create public ips
       azure_rm_publicipaddress:
         resource_group: Testing
         allocation_method: Static
         name: "publicip00{{ item }}"
+      # Store the return value from the module for use later
       register: ip_addresses
       with_sequence: count=2
 
@@ -64,9 +68,10 @@
           sku: 16.04-LTS
           version: latest
           publisher: Canonical
-      register: vm_facts
       with_sequence: count=2
 
+# If Ansible hasn't failed this playbook, VMs probably exist.
+# Steps below are proving the VMs exist for ourselves
     - name: Add hosts to playbook hosts record
       add_host:
         name: "{{ item.state.ip_address }}"
@@ -76,7 +81,10 @@
     - name: Print hosts in azure_vms groups
       debug:
         var: groups['azure_vms']
+        # Only print if playbook is run with a -v verbosity or higher
+        verbosity: 1
 
+# For the hosts we've put in the group azure_vms, run some shell commands to prove existence, connectivity.
 - hosts: azure_vms
   remote_user: azure_user
   tasks:
@@ -87,3 +95,4 @@
     - name: Print shell output from previous task
       debug:
         msg: shell_out
+        verbosity: 1
