@@ -13,6 +13,7 @@
 
 # If Ansible hasn't failed this playbook, VMs probably exist.
 # Steps below are proving the VMs exist for ourselves
+    - include: add-hosts-to-playbook.yml
 
     - name: "Print hosts in {{ host_group }} group"
       debug:

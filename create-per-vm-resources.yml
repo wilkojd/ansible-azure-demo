@@ -31,8 +31,3 @@
       sku: 16.04-LTS
       version: latest
       publisher: Canonical
-
-# Use the return value from the ip address creation to create ansible host/group records.
-# These records are in-memory, and for this playbook only.
-# This isn't strictly necessary unless we want to test VM existence ourselves
-- include: add-hosts-to-playbook.yml
