@@ -16,7 +16,7 @@ The steps to set this up on macOS are:
 [defaults]
 host_key_checking = False
 ```
-6. Confirm Ansible is available `ansible --version` returns `ansible 2.3.0.0`
+6. Confirm Ansible is available. `ansible --version` returns `ansible 2.3.0.0`
 
 ### Azure
 1. Create a *service principal* application with an existing Azure account and assign it as an owner of the Azure account, in order to authenticate Ansible with Azure account. The steps to do this are detailed at https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal . **N.B. The URL for the application does not have to be a working URL, see http://blog.davidebbo.com/2014/12/azure-service-principal.html.**
