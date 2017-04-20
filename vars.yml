@@ -1,0 +1,6 @@
+# name of the Azure resource group
+resource_group: azure_demo
+# The admin user created on the VMs
+azure_admin_user: azure_user
+# Ansible host group name
+host_group: new_vms

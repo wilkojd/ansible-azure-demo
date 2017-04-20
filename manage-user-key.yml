@@ -1,0 +1,19 @@
+# This playbook requires public ip address and VM resources in the resource_group Testing to already exist
+- hosts: localhost
+  vars_files:
+    - ./vars.yml 
+  tasks:
+    - include: add-hosts-to-playbook.yml
+
+- hosts: "{{ host_group }}"
+  vars_files:
+    - ./vars.yml 
+  remote_user: "{{ azure_admin_user }}"
+  tasks:
+    - name: "Ensure public key is {{ user_state }}"
+      authorized_key:
+        user: "{{ azure_admin_user }}"
+        key: "{{ lookup('file', './newuserkey.pub') }}"
+        state: "{{ user_state }}"
+
+# Add a test to check can/can't login using ssh -i newuserkey?

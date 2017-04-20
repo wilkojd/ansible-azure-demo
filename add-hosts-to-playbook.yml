@@ -1,0 +1,10 @@
+- name: Retrieve public ips of VMs in resource group
+  azure_rm_publicipaddress_facts:
+    resource_group: "{{ resource_group }}"
+  register: ip_addresses
+
+- name: Add hosts to playbook hosts record
+  add_host:
+    name: "{{ item.properties.ipAddress }}"
+    group: "{{ host_group }}"
+  with_items: "{{ ip_addresses.ansible_facts.azure_publicipaddresses }}"

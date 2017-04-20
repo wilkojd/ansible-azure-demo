@@ -1,29 +1,30 @@
 # Initial version of this script came from the Ansible Azure documentation. https://docs.ansible.com/ansible/guide_azure.html
 # Commands run against Azure are run from localhost
 - hosts: localhost
+  vars_files:
+    - ./vars.yml 
   tasks:
     - name: Run tasks needed for each resource group
-      include: create-per-resource-group-resources.yml resource_group=Testing
+      include: create-per-resource-group-resources.yml
 
     - name: Run tasks needed for each VM
-      include: create-per-vm-resources.yml
-      vars: 
-        vm_number: "{{item}}"
-        resource_group: Testing
+      include: "create-per-vm-resources.yml vm_number={{item}}"
       with_sequence: count=2
 
 # If Ansible hasn't failed this playbook, VMs probably exist.
 # Steps below are proving the VMs exist for ourselves
 
-    - name: Print hosts in azure_vms groups
+    - name: "Print hosts in {{ host_group }} group"
       debug:
-        var: groups['azure_vms']
+        var: groups['{{ host_group }}']
         # Only print if playbook is run with a -v verbosity or higher
         verbosity: 1
 
 # For the hosts we've put in the group azure_vms, run some shell commands to prove existence, connectivity.
-- hosts: azure_vms
-  remote_user: azure_user
+- hosts: "{{ host_group }}"
+  vars_files:
+    - ./vars.yml 
+  remote_user: "{{ azure_admin_user }}"
   tasks:
     - name: Run whoami, hostname and uptime on new VMs
       shell: whoami; hostname; uptime
