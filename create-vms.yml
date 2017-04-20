@@ -27,9 +27,3 @@
   tasks:
     - name: Run whoami, hostname and uptime on new VMs
       shell: whoami; hostname; uptime
-      register: shell_out
-
-    - name: Print shell output from previous task
-      debug:
-        msg: shell_out
-        verbosity: 1
